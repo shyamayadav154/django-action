@@ -1,22 +1,29 @@
-FROM python:3.8-alpine as base
-RUN apk add --update --virtual .build-deps \
-    build-base \
-    postgresql-dev \
-    python3-dev \
-    libpq
+FROM python:3.8.16-slim-bullseye as deps
 
-COPY requirements.txt /app/requirements.txt
-RUN pip install -r /app/requirements.txt
+ENV PYTHONUNBUFFERED=1
 
-# Now multistage build
-FROM python:3.8-alpine
-RUN apk add libpq
-COPY --from=base /usr/local/lib/python3.8/site-packages/ /usr/local/lib/python3.8/site-packages/
-COPY --from=base /usr/local/bin/ /usr/local/bin/
-COPY . /app
-ENV PYTHONUNBUFFERED 1
+WORKDIR /app
+
+COPY requirements.txt requirements.txt
+
+RUN pip install -r requirements.txt --no-cache-dir
+
+
+
+
+FROM python:3.8-alpine as builder
+
+ENV PYTHONUNBUFFERED=1
+
+WORKDIR /app
+
+COPY --from=deps /usr/local/lib/python3.8/site-packages/ /usr/local/lib/python3.8/site-packages/
+
+COPY --from=deps /usr/local/bin/ /usr/local/bin/
+
+
+COPY . .
+
 EXPOSE 8000
 
-# Run the Django app
-
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD python manage.py runserver 0.0.0.0:8000
