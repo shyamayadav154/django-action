@@ -1,0 +1,8 @@
+version: '3.8'
+
+services:
+  web:
+    build: ./
+    command: gunicorn --bind 0.0.0.0:8000 backend.asgi -w 4 -k uvicorn.workers.UvicornWorker
+    ports:
+      - 8000:8000
