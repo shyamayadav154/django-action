@@ -11,7 +11,7 @@ WORKDIR /app
 # Install dependencies
 COPY requirements.txt requirements.txt
 
-RUN pip install -r requirements.txt
+RUN pip install -r requirements.txt --no-cache-dir
 
 COPY . .
 
