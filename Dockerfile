@@ -1,47 +1,29 @@
-FROM python:3.8-slim-bullseye
 
-# Set environment variables
-ENV PIP_DISABLE_PIP_VERSION_CHECK 1
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+FROM python:3.8-slim-buster as builder
 
-# Set working directory
+RUN python -m venv venv
+ENV PATH="/app/venv:$PATH"
+ENV VIRTUAL_ENV=/opt/venv
+RUN python3 -m venv $VIRTUAL_ENV
+COPY requirements.txt /app/requirements.txt
+WORKDIR /app
+RUN pip install -r requirements.txt 
+COPY . /app
+
+# Multi stage build
+FROM python:3.8-slim-buster as app
+
+#COPY --from=builder /root /root
+COPY --from=builder /app /app
+COPY --from=builder /opt/venv /opt/venv
 WORKDIR /app
 
-# Install dependencies
-COPY requirements.txt requirements.txt
+#ENV PYTHONDONTWRITEBYTECODE 1
 
-RUN pip install -r requirements.txt --no-cache-dir
+#ENV PYTHONUNBUFFERED 1
 
-COPY . .
+#ENV PATH=/root/.local/bin:$PATH
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+RUN python3 -m venv $VIRTUAL_ENV
 
-EXPOSE 80
-
-CMD python -m uvicorn backend.asgi:application --host 0.0.0.0 --port 80
-
-
-# CMD ["uvicorn", "backend.asgi", "--host", "0.0.0.0", "--port", "80"]
-
-
-# CMD python manage.py runserver 0.0.0.0:8000
-
-# FROM python:3.8-slim-bullseye as base
-# RUN apk add --update --virtual .build-deps \
-#     build-base \
-#     python3-dev \
-#     libpq \
-#     musl-dev \ 
-#     linux-headers \ 
-#     g++
-
-# COPY requirements.txt requirements.txt
-# RUN pip install -r requirements.txt
-
-# FROM python:3.8-slim-bullseye
-# RUN apk add libpq
-# COPY --from=base /usr/local/lib/python3.8/site-packages/ /usr/local/lib/python3.8/site-packages/
-# COPY --from=base /usr/local/bin/ /usr/local/bin/
-# COPY . .
-# ENV PYTHONUNBUFFERED 1
-# # CMD ["uvicorn", "backend.asgi", "--host", "0.0.0.0", "--port", "80"]
-
+#CMD python manage.py runserver
