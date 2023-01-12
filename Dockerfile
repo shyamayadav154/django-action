@@ -34,7 +34,7 @@ COPY --from=base /usr/local/bin/ /usr/local/bin/
 
 WORKDIR /app
 
-COPY . ./app
+COPY . /app
 ENV PYTHONUNBUFFERED 1
 EXPOSE 8000
 
