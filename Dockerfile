@@ -1,29 +1,15 @@
-
-FROM python:3.8-slim-buster as builder
-
-RUN python -m venv venv
-ENV PATH="/app/venv:$PATH"
-ENV VIRTUAL_ENV=/opt/venv
-RUN python3 -m venv $VIRTUAL_ENV
+FROM python:3.10-slim-buster as base
 COPY requirements.txt /app/requirements.txt
-WORKDIR /app
-RUN pip install -r requirements.txt 
+RUN pip install -r /app/requirements.txt
+
+
+FROM python:3.10-alpine
+RUN apk add libpq
+COPY --from=base /usr/local/lib/python3.10/site-packages/ /usr/local/lib/python3.10/site-packages/
+COPY --from=base /usr/local/bin/ /usr/local/bin/
 COPY . /app
+ENV PYTHONUNBUFFERED 1
+EXPOSE 8000
 
-# Multi stage build
-FROM python:3.8-slim-buster as app
+CMD python manage.py runserver 0.0.0.0:8000
 
-#COPY --from=builder /root /root
-COPY --from=builder /app /app
-COPY --from=builder /opt/venv /opt/venv
-WORKDIR /app
-
-#ENV PYTHONDONTWRITEBYTECODE 1
-
-#ENV PYTHONUNBUFFERED 1
-
-#ENV PATH=/root/.local/bin:$PATH
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
-RUN python3 -m venv $VIRTUAL_ENV
-
-#CMD python manage.py runserver
