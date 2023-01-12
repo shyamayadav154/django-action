@@ -1,15 +1,38 @@
-FROM python:3.10-slim-buster as base
+FROM python:3.10-alpine as base
+RUN apk add --update --virtual .build-deps \
+    build-base \
+    postgresql-dev \
+    python3-dev \
+    libpq
+
 COPY requirements.txt /app/requirements.txt
-RUN pip install -r /app/requirements.txt --no-cache-dir
+RUN pip install -r /app/requirements.txt
 
-
-FROM python:3.10-slim-buster as runner
+# Now multistage build
+FROM python:3.10-alpine
+RUN apk add libpq
 COPY --from=base /usr/local/lib/python3.10/site-packages/ /usr/local/lib/python3.10/site-packages/
-
-# COPY --from=base /usr/local/bin/ /usr/local/bin/
-COPY . .
+COPY --from=base /usr/local/bin/ /usr/local/bin/
+COPY . /app
 ENV PYTHONUNBUFFERED 1
-EXPOSE 8000
+
 
 CMD python manage.py runserver 0.0.0.0:8000
+
+# working code
+
+# FROM python:3.10-slim-buster as base
+# COPY requirements.txt /app/requirements.txt
+# RUN pip install -r /app/requirements.txt --no-cache-dir
+
+
+# FROM python:3.10-slim-buster as runner
+# COPY --from=base /usr/local/lib/python3.10/site-packages/ /usr/local/lib/python3.10/site-packages/
+
+# # COPY --from=base /usr/local/bin/ /usr/local/bin/
+# COPY . .
+# ENV PYTHONUNBUFFERED 1
+# EXPOSE 8000
+
+# CMD python manage.py runserver 0.0.0.0:8000
 
