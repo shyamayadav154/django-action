@@ -7,7 +7,7 @@ FROM python:3.10-slim-buster as runner
 COPY --from=base /usr/local/lib/python3.10/site-packages/ /usr/local/lib/python3.10/site-packages/
 
 # COPY --from=base /usr/local/bin/ /usr/local/bin/
-COPY . /app
+COPY . .
 ENV PYTHONUNBUFFERED 1
 EXPOSE 8000
 
