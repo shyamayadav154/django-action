@@ -1,9 +1,11 @@
 FROM python:3.10-alpine as base
 RUN apk add --update --virtual .build-deps \
     build-base \
-    postgresql-dev \
     python3-dev \
-    libpq
+    libpq \
+    musl-dev \ 
+    linux-headers \ 
+    g++
 
 COPY requirements.txt /app/requirements.txt
 RUN pip install -r /app/requirements.txt
