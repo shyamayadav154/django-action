@@ -31,7 +31,7 @@ RUN pip install  -r /app/requirements.txt --no-cache-dir
 FROM python:3.10-slim-buster as runner
 COPY --from=base /usr/local/lib/python3.10/site-packages/ /usr/local/lib/python3.10/site-packages/
 
-COPY . .
+COPY . ./app
 ENV PYTHONUNBUFFERED 1
 EXPOSE 8000
 
