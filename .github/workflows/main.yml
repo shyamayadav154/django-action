@@ -24,9 +24,9 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          tags: shyamayadav154/backend-main:latest
-          cache-from: type=registry,ref=shyamayadav154/backend-main:buildcache
-          cache-to: type=registry,ref=shyamayadav154/backend-main:buildcache,mode=max
+          tags: shyamayadav154/backend-test:latest
+          cache-from: type=registry,ref=shyamayadav154/backend-test:buildcache
+          cache-to: type=registry,ref=shyamayadav154/backend-test:buildcache,mode=max
 
 #
 # test caching enabled 2
