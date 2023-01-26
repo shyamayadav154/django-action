@@ -1,0 +1,65 @@
+#  file with  deployment, service and ingress
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mevvit-deployment-frontend
+  labels:
+    app: mevvit-frontend
+spec:
+  replicas: 6
+  selector:
+    matchLabels:
+      app: mevvit-frontend
+  template:
+    metadata:
+      labels:
+        app: mevvit-frontend
+    spec:
+      containers:
+        - name: mevvit-frontend
+          image: shyamayadav154/mevfinal-main
+          ports:
+            - containerPort: 3000
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mevvit-frontend-service
+spec:
+  selector:
+    app: mevvit-frontend
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-mevvit
+  annotations:
+    nginx.ingress.kubernetes.io/affinity: "cookie"
+    nginx.ingress.kubernetes.io/session-cookie-name: "route"
+    nginx.ingress.kubernetes.io/session-cookie-expires: "172800"
+    nginx.ingress.kubernetes.io/session-cookie-max-age: "172800"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - shyam.live
+    secretName: mevvit-tls
+  rules:
+  - host: shyam.live
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: mevvit-frontend-service
+            port:
+              number: 3000
