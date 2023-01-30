@@ -46,7 +46,8 @@ RUN pip install --no-cache-dir psycopg2-binary
 
 
 EXPOSE 8000
-CMD  uvicorn backend.asgi:application --host 0.0.0.0 --port 8000
+ENTRYPOINT ["uvicorn", "backend.asgi:application", "--host", "0.0.0.0", "--port", "8000"]
+# CMD  uvicorn backend.asgi:application --host 0.0.0.0 --port 8000
 # CMD ["uvicorn", "backend.asgi:application", "--host", "0.0.0.0", "--port", "8000"]
 
 # CMD python manage.py runserver 0.0.0.0:8000
