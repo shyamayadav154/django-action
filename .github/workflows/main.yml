@@ -20,6 +20,6 @@ jobs:
         with:
           push: true
           tags: shyamayadav154/backend-mini:dev
-          cache-from: type=registry,ref=shyamayadav154/backend-mini:latest
-          cache-to: type=registry,ref=shyamayadav154/backend-mini:latest,mode=max
+          cache-from: type=registry,ref=shyamayadav154/backend-mini:cache
+          cache-to: type=registry,ref=shyamayadav154/backend-mini:cache,mode=max
         
