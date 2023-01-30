@@ -19,7 +19,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          tags: shyamayadav154/backend-mini
+          tags: shyamayadav154/backend-mini:dev
           cache-from: type=registry,ref=shyamayadav154/backend-mini:latest
           cache-to: type=registry,ref=shyamayadav154/backend-mini:latest,mode=max
         
