@@ -1,16 +1,17 @@
-# Build stage
-FROM python:3.9 AS build
-WORKDIR /app
-COPY requirements.txt .
-RUN python -m venv venv
-RUN venv/bin/pip install -r requirements.txt
-COPY . .
-RUN venv/bin/python manage.py collectstatic --noinput
+FROM python:3.10-alpine as base
+RUN apk add --update --virtual .build-deps \
+    build-base \
+    postgresql-dev \
+    python3-dev \
+    libpq
 
-# Final stage
-FROM python:3.9-alpine
-WORKDIR /app
-COPY --from=build /app .
-RUN apk add --no-cache libpq
-ENV PATH="/app/venv/bin:$PATH"
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+COPY requirements.txt /app/requirements.txt
+RUN pip install -r /app/requirements.txt
+
+# Now multistage build
+FROM python:3.10-alpine
+RUN apk add libpq
+COPY --from=base /usr/local/lib/python3.10/site-packages/ /usr/local/lib/python3.10/site-packages/
+COPY --from=base /usr/local/bin/ /usr/local/bin/
+COPY . /app
+ENV PYTHONUNBUFFERED 1
