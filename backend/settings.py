@@ -13,7 +13,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 SECRET_KEY = 'a80@58k@y&by1-w^n6(5k^k=gaq^se9(9ocvx1()07ij38ph29'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True 
 
 ALLOWED_HOSTS = ['*']
 
@@ -219,7 +219,7 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 5,
 }
 
-CORS_ORIGIN_WHITELIST = ('https://mevvit.com', 'http://127.0.0.1:3000', 'http://localhost:3000','https://www.mevvit.com')
+CORS_ORIGIN_WHITELIST = ('https://mevvit.com', 'http://127.0.0.1:3000', 'http://localhost:3000','https://www.mevvit.com','https://dry.mevvit.com')
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': datetime.timedelta(days=2),
