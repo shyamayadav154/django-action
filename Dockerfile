@@ -24,30 +24,23 @@
 # working code
 
 FROM python:3.10-slim-buster as base
-WORKDIR /app
 COPY requirements.txt /app/requirements.txt
 RUN pip install  -r /app/requirements.txt --no-cache-dir
-COPY . .
-RUN python manage.py collectstatic --noinput
 
 
-FROM python:3.10-alpine as runner
-ENV PYTHONUNBUFFERED 1
-# COPY --from=base /usr/local/lib/python3.10/site-packages/ /usr/local/lib/python3.10/site-packages/
-# COPY --from=base /usr/local/bin/ /usr/local/bin/
+FROM python:3.10-slim-buster as runner
+COPY --from=base /usr/local/lib/python3.10/site-packages/ /usr/local/lib/python3.10/site-packages/
+COPY --from=base /usr/local/bin/ /usr/local/bin/
 
 WORKDIR /app
 
-COPY --from=base /app .
-RUN apk add --no-cache libpq postgresql-dev
-RUN pip install --no-cache-dir psycopg2-binary
-# COPY . .
-
-
-
+COPY . /app
+ENV PYTHONUNBUFFERED 1
 EXPOSE 8000
-ENTRYPOINT ["uvicorn", "backend.asgi:application", "--host", "0.0.0.0", "--port", "8000"]
-# CMD  uvicorn backend.asgi:application --host 0.0.0.0 --port 8000
+
+
+
+CMD  uvicorn backend.asgi:application --host 0.0.0.0 --port 8000
 # CMD ["uvicorn", "backend.asgi:application", "--host", "0.0.0.0", "--port", "8000"]
 
 # CMD python manage.py runserver 0.0.0.0:8000
